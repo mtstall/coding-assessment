@@ -8,6 +8,10 @@ var answerC = document.querySelector('#C');
 var answerD = document.querySelector('#D');
 var checker = document.querySelector('.checker');
 var secondsLeft = 60;
+var timeLeft = 3;
+var numCorrectAnswers = 0;
+var numWrongAnswers = 0;
+var isQuizComplete = false;
 
 //object containing all quiz questions and answer choices
 var allQuestions = [{
@@ -55,6 +59,19 @@ var allQuestions = [{
 var currentQuestionIndex = 0;
 var lastQuestionIndex = allQuestions.length;
 
+//this function runs either when the timer hits zero or the user has finished answering all questions
+function quizComplete () {
+    var score = (numCorrectAnswers / 5) * 100;
+    timer.textContent = "Quiz Over! Final Score: "+score;
+    console.log("quiz complete function is running");
+    questionArea.textContent = '';
+
+    answerA.textContent = '';
+    answerB.textContent = '';
+    answerC.textContent = '';
+    answerD.textContent = '';
+}
+
 //countdown timer
 function countdown () {
     start.remove();
@@ -62,10 +79,9 @@ function countdown () {
     var timerInterval = setInterval(function() {
         timer.textContent = "Time left: "+secondsLeft+" seconds";
         secondsLeft --;
-    
-        if(secondsLeft === 0) {
+        if ((secondsLeft>0 && isQuizComplete) || secondsLeft === 0){
             clearInterval(timerInterval);
-            timer.textContent = "Quiz Over!";
+            quizComplete();  
         }
         }, 1000); 
 }
@@ -83,46 +99,58 @@ function loadQuestion () {
     }
 }
 
+function textDisappear () {
+    setInterval(function() {
+        //console.log(checker);
+        timeLeft --;
+        //console.log(timeLeft);
+    
+        if(timeLeft === 0) {
+            clearInterval(textDisappear);
+            checker.textContent = "";
+            timeLeft = 3;
+        }
+        }, 1000);
+}
+
 //this function starts the timer and loads the first question
 function startQuiz () {
     countdown();
     loadQuestion();
 }
 
+//this function checks if the selected answer is correct or not
 function checkAnswer (event) {
     event.preventDefault();
+    //pulls the correct answer for the given question from the allQuestions object
+    if(currentQuestionIndex < lastQuestionIndex) {
     var correctAnswer = allQuestions[currentQuestionIndex].correctAnswer;
-    //console.log("This is the correct answer: ",correctAnswer);
+    //finds the button the user clicked
     var buttonClicked = event.target;
     var chosenAnswer = buttonClicked.getAttribute("id");
-    //console.log(chosenAnswer);
+    var correctOrWrong = document.createElement("p");
 
-    if (chosenAnswer === correctAnswer && currentQuestionIndex < lastQuestionIndex) {
-        var correct = document.createElement("p");
-        correct.textContent = "";
-        checker.appendChild(correct);
+        if (chosenAnswer === correctAnswer && currentQuestionIndex < lastQuestionIndex) {
+            correctOrWrong.textContent = "Correct!";
+            numCorrectAnswers ++;
+        }
+        else if (chosenAnswer !== correctAnswer && currentQuestionIndex < lastQuestionIndex) {
+            correctOrWrong.textContent = "Wrong!";
+            secondsLeft = secondsLeft - 10;
+            numWrongAnswers ++;
+        }
+    checker.appendChild(correctOrWrong);
+    textDisappear();
+    }
 
-        var timeLeft = 3;
-        var fadeOut = setInterval(function() {
-            //console.log(checker);
-            checker.textContent = "Correct!";
-            timeLeft --;
-            //console.log(timeLeft);
-        
-            if(timeLeft === 0) {
-                clearInterval(fadeOut);
-                checker.textContent = "";
-            }
-            }, 1000);
-    }
-    else {
-        var wrong = document.createElement("p");
-        wrong.textContent = "Wrong!";
-        checker.appendChild(wrong);
-        secondsLeft = secondsLeft - 10;
-    }
-    if(currentQuestionIndex < lastQuestionIndex) {
-        currentQuestionIndex++;
+    currentQuestionIndex++;
+    console.log(currentQuestionIndex);
+
+    if (currentQuestionIndex == lastQuestionIndex) {
+        isQuizComplete = true;
+        console.log(isQuizComplete);
+        console.log("currentQuestion Index: ",currentQuestionIndex);
+        console.log("lastquestionindex: ",lastQuestionIndex);
     }
     loadQuestion(currentQuestionIndex);
 }
