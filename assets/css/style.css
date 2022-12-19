@@ -8,3 +8,11 @@ h1 {
     width: 100%;
     text-align: center;
 }
+
+.answers {
+    display: inline;
+}
+
+button {
+    display: block;
+}
