@@ -82,17 +82,15 @@ function saveInitials(event) {
 
 //this function runs either when the timer hits zero or the user has finished answering all questions
 function quizComplete() {
-  questionArea.textContent = "";
+    questionArea.textContent = "";
 
-var answerA = document.querySelector("#A");
-var answerB = document.querySelector("#B");
-var answerC = document.querySelector("#C");
-var answerD = document.querySelector("#D");
+    var answers = document.querySelectorAll("button");
+    console.log(answers);
 
-  answerA.textContent = "";
-  answerB.textContent = "";
-  answerC.textContent = "";
-  answerD.textContent = "";
+    for (var i = 0; i < answers.length; i++) {
+        answers[i].remove();
+    }
+
   var score = (numCorrectAnswers / 5) * 100;
   timer.textContent = "Quiz Over! Final Score: " + score;
 
