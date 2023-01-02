@@ -9,6 +9,31 @@ h1 {
     text-align: center;
 }
 
-button {
-    display: block;
+answers {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+.answers button {
+    width: 100%;
+}
+
+main {
+    text-align: center;
+}
+
+.enterInitials {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+#input-msg {
+    width: 25%;
+}
+
+#initials {
+    width: 25%;
 }
