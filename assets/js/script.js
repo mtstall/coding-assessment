@@ -4,7 +4,7 @@ var questionArea = document.querySelector(".questions");
 var answerChoices = document.querySelector(".answers");
 var checker = document.querySelector(".checker");
 var secondsLeft = 60;
-var timeLeft = 2;
+var timeLeft = 1;
 var numCorrectAnswers = 0;
 var numWrongAnswers = 0;
 var isQuizComplete = false;
@@ -61,13 +61,13 @@ var allQuestions = [
 var currentQuestionIndex = 0;
 var lastQuestionIndex = allQuestions.length;
 
-//this function creates the spot for users to enter their initials to save their final score and saves it
+//this function saves the users initials and final score to local storage
 function saveInitials(event) {
-    event.preventDefault();
+  event.preventDefault();
   var score = (numCorrectAnswers / 5) * 100;
 
   var quizResults = {
-    initials: document.getElementById('input-msg').value,
+    initials: document.getElementById("input-msg").value,
     score: score,
   };
 
@@ -75,21 +75,20 @@ function saveInitials(event) {
 
   var lastScore = JSON.parse(localStorage.getItem("quizResults"));
 
-  if (lastScore!== null) {
-    document.querySelector(".message").textContent = "Initials: "+lastScore.initials+" - Score: "+lastScore.score;
+  if (lastScore !== null) {
+    document.querySelector(".message").textContent =
+      "Initials: " + lastScore.initials + " - Score: " + lastScore.score;
   }
 }
 
 //this function runs either when the timer hits zero or the user has finished answering all questions
 function quizComplete() {
-    questionArea.textContent = "";
+  questionArea.textContent = "";
 
-    var answers = document.querySelectorAll("button");
-    console.log(answers);
-
-    for (var i = 0; i < answers.length; i++) {
-        answers[i].remove();
-    }
+  var answers = document.querySelectorAll("button");
+  for (var i = 0; i < answers.length; i++) {
+    answers[i].remove();
+  }
 
   var score = (numCorrectAnswers / 5) * 100;
   timer.textContent = "Quiz Over! Final Score: " + score;
@@ -105,6 +104,7 @@ function quizComplete() {
   initialsButton.textContent = "Add initials";
   enterInitials.appendChild(initialsButton);
 
+  //adding event listener to click button to save users initials
   initialsButton.addEventListener("click", saveInitials);
 }
 
@@ -125,29 +125,31 @@ function countdown() {
 //this function creates the current question
 function loadQuestion() {
 
-    if (currentQuestionIndex === 0) {
-    var answerA = document.createElement('button');
+    //if this is the first question being loaded, create the button elements for user to pick from
+  if (currentQuestionIndex === 0) {
+    var answerA = document.createElement("button");
     answerA.setAttribute("id", "A");
     answerChoices.appendChild(answerA);
-  
-    var answerB = document.createElement('button');
-    answerB.setAttribute("id","B");
+
+    var answerB = document.createElement("button");
+    answerB.setAttribute("id", "B");
     answerChoices.appendChild(answerB);
-  
-    var answerC = document.createElement('button');
-    answerC.setAttribute("id","C");
+
+    var answerC = document.createElement("button");
+    answerC.setAttribute("id", "C");
     answerChoices.appendChild(answerC);
-  
-    var answerD = document.createElement('button');
-    answerD.setAttribute("id","D");
-    answerChoices.appendChild(answerD);  
-    }
 
-    answerA = document.querySelector("#A");
-    answerB = document.querySelector("#B");
-    answerC = document.querySelector("#C");
-    answerD = document.querySelector("#D");
+    var answerD = document.createElement("button");
+    answerD.setAttribute("id", "D");
+    answerChoices.appendChild(answerD);
+  }
+  //create variables for the answer chocies to reference in next if statement
+  answerA = document.querySelector("#A");
+  answerB = document.querySelector("#B");
+  answerC = document.querySelector("#C");
+  answerD = document.querySelector("#D");
 
+    //setting text of current question and answers  
   if (currentQuestionIndex < lastQuestionIndex) {
     var currentQuestion = allQuestions[currentQuestionIndex];
     questionArea.textContent = currentQuestion.question;
@@ -159,7 +161,7 @@ function loadQuestion() {
   }
 }
 
-
+//function that makes the Correct or Wrong text go away after one second
 function textDisappear() {
   var textDisappear = setInterval(function () {
     timeLeft--;
@@ -167,7 +169,7 @@ function textDisappear() {
     if (timeLeft === 0) {
       clearInterval(textDisappear);
       checker.textContent = "";
-      timeLeft = 2;
+      timeLeft = 1;
     }
   }, 1000);
 }
@@ -189,6 +191,7 @@ function checkAnswer(event) {
     var chosenAnswer = buttonClicked.getAttribute("id");
     var correctOrWrong = document.createElement("p");
 
+    //determines if user will get a Correct or Wrong message based on answer choice
     if (
       chosenAnswer === correctAnswer &&
       currentQuestionIndex < lastQuestionIndex
@@ -204,6 +207,7 @@ function checkAnswer(event) {
       numWrongAnswers++;
     }
     checker.appendChild(correctOrWrong);
+    //run text disappear function so text doesn't stay on the page forever
     textDisappear();
   }
 
@@ -217,4 +221,5 @@ function checkAnswer(event) {
 
 //adding click event listener to start button and running startQuiz function once clicked
 start.addEventListener("click", startQuiz);
+//adding click event listener to answerChoices variable to check user answer
 answerChoices.addEventListener("click", checkAnswer);
